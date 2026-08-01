@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { motion, AnimatePresence } from 'framer-motion';
-import { UploadCloud, FileText, CheckCircle2, Sparkles, ShieldCheck, FileCheck2 } from 'lucide-react';
+import { UploadCloud, FileText, CheckCircle2, FileCheck2 } from 'lucide-react';
 
 interface Props {
   onFileUpload: (file: File) => void;
@@ -28,115 +28,74 @@ export default function FileUploader({ onFileUpload }: Props) {
 
   return (
     <div className="w-full">
-      {/* Upload Box Container with Glow Effect */}
+      {/* Upload Box Container with Cyber Emerald Glow */}
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5, type: 'spring' }}
-        className="relative group rounded-3xl p-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 shadow-2xl"
+        className="relative group rounded-3xl p-1 bg-gradient-to-r from-emerald-500/40 via-cyan-500/30 to-teal-500/40 backdrop-blur-xl shadow-2xl shadow-emerald-950/50"
       >
-        <div className="bg-white rounded-[22px] p-8 md:p-12 text-center">
+        <div className="bg-slate-950/80 backdrop-blur-md rounded-[22px] p-6 md:p-8 text-center border border-emerald-500/20">
           {/* Main Drop Area */}
           <div
             {...getRootProps()}
-            className={`relative border-2 border-dashed rounded-2xl p-10 cursor-pointer transition-all duration-300 flex flex-col items-center justify-center ${
+            className={`relative border-2 border-dashed rounded-2xl p-8 cursor-pointer transition-all duration-300 flex flex-col items-center justify-center ${
               isDragActive
-                ? 'border-blue-500 bg-blue-50/60 scale-[1.01]'
-                : 'border-slate-200 hover:border-blue-400 hover:bg-slate-50/50'
+                ? 'border-emerald-400 bg-emerald-500/10 scale-[1.01]'
+                : 'border-slate-700 hover:border-cyan-400 hover:bg-slate-900/60'
             }`}
           >
             <input {...getInputProps()} />
 
-            {/* Floating Animated Icon */}
+            {/* Animated Icon */}
             <motion.div
-              animate={{ y: [0, -8, 0] }}
+              animate={{ y: [0, -6, 0] }}
               transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-              className="w-20 h-20 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 shadow-inner text-blue-600"
+              className="w-16 h-16 bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 border border-emerald-400/40 rounded-2xl flex items-center justify-center mb-4 text-emerald-400 shadow-lg shadow-emerald-500/10"
             >
-              <UploadCloud className="w-10 h-10" />
+              <UploadCloud className="w-8 h-8" />
             </motion.div>
 
-            <h3 className="text-2xl font-bold text-slate-800 mb-2">
-              {isDragActive ? 'Drop your file here now' : 'Drag & Drop your Resume'}
+            <h3 className="text-xl font-bold text-white mb-2 tracking-tight">
+              {isDragActive ? 'Drop your resume here' : 'Upload Your Resume'}
             </h3>
-            <p className="text-slate-500 max-w-sm text-sm mb-6">
-              Upload your resume in PDF or DOCX format to analyze your ATS match score instantly.
+            <p className="text-slate-400 max-w-sm text-xs mb-5 font-normal">
+              Drag & drop your resume (PDF or DOCX) to launch AI analysis.
             </p>
 
-            {/* Format Chips */}
-            <div className="flex gap-3">
-              <span className="px-3 py-1 bg-slate-100 text-slate-600 font-semibold rounded-full text-xs flex items-center gap-1.5 border border-slate-200">
-                <FileCheck2 className="w-3.5 h-3.5 text-blue-500" /> PDF
+            {/* Format Badges */}
+            <div className="flex gap-2">
+              <span className="px-3 py-1 bg-slate-900 text-slate-200 font-semibold rounded-full text-xs flex items-center gap-1 border border-emerald-500/20">
+                <FileCheck2 className="w-3.5 h-3.5 text-emerald-400" /> PDF
               </span>
-              <span className="px-3 py-1 bg-slate-100 text-slate-600 font-semibold rounded-full text-xs flex items-center gap-1.5 border border-slate-200">
-                <FileCheck2 className="w-3.5 h-3.5 text-blue-500" /> DOCX
-              </span>
-              <span className="px-3 py-1 bg-slate-100 text-slate-600 font-semibold rounded-full text-xs flex items-center gap-1.5 border border-slate-200">
-                Max 5MB
+              <span className="px-3 py-1 bg-slate-900 text-slate-200 font-semibold rounded-full text-xs flex items-center gap-1 border border-emerald-500/20">
+                <FileCheck2 className="w-3.5 h-3.5 text-cyan-400" /> DOCX
               </span>
             </div>
           </div>
 
-          {/* File Selected Notification Banner */}
+          {/* Selected File Banner */}
           <AnimatePresence>
             {selectedFile && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="mt-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between"
+                className="mt-4 p-3 bg-emerald-950/60 border border-emerald-500/40 rounded-xl flex items-center justify-between text-left"
               >
                 <div className="flex items-center gap-3">
-                  <FileText className="text-emerald-600 w-6 h-6" />
-                  <div className="text-left">
-                    <p className="font-semibold text-slate-800 text-sm">{selectedFile.name}</p>
-                    <p className="text-xs text-slate-500">{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                  <FileText className="text-emerald-400 w-5 h-5" />
+                  <div>
+                    <p className="font-semibold text-white text-xs">{selectedFile.name}</p>
+                    <p className="text-[10px] text-slate-400">{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 text-emerald-700 font-bold text-sm">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-500" /> Ready for AI Analysis
+                <div className="flex items-center gap-1.5 text-emerald-400 font-bold text-xs">
+                  <CheckCircle2 className="w-4 h-4" /> Ready
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
-      </motion.div>
-
-      {/* Trust & Feature Badges Below Upload */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8"
-      >
-        <div className="p-4 bg-white/80 rounded-2xl border border-slate-200/60 shadow-sm flex items-center gap-3">
-          <div className="p-2.5 bg-blue-100 rounded-xl text-blue-600">
-            <Sparkles className="w-5 h-5" />
-          </div>
-          <div className="text-left">
-            <p className="font-bold text-sm text-slate-800">AI Powered</p>
-            <p className="text-xs text-slate-500">Instant ATS parsing</p>
-          </div>
-        </div>
-
-        <div className="p-4 bg-white/80 rounded-2xl border border-slate-200/60 shadow-sm flex items-center gap-3">
-          <div className="p-2.5 bg-indigo-100 rounded-xl text-indigo-600">
-            <ShieldCheck className="w-5 h-5" />
-          </div>
-          <div className="text-left">
-            <p className="font-bold text-sm text-slate-800">100% Private</p>
-            <p className="text-xs text-slate-500">Data strictly secure</p>
-          </div>
-        </div>
-
-        <div className="p-4 bg-white/80 rounded-2xl border border-slate-200/60 shadow-sm flex items-center gap-3">
-          <div className="p-2.5 bg-purple-100 rounded-xl text-purple-600">
-            <Sparkles className="w-5 h-5" />
-          </div>
-          <div className="text-left">
-            <p className="font-bold text-sm text-slate-800">Smart Guidance</p>
-            <p className="text-xs text-slate-500">Courses & job matching</p>
-          </div>
         </div>
       </motion.div>
     </div>
