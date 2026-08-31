@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Zap, 
@@ -14,9 +15,12 @@ import {
   Home, 
   User,
   Sparkles,
-  CheckCircle2
+  CheckCircle2,
+  ArrowRight,
+  LogOut
 } from 'lucide-react';
 import AuthModal from '../components/AuthModal';
+import { useAuth } from '../context/AuthContext';
 
 // Features Carousel Data
 const featuresData = [
@@ -55,8 +59,9 @@ const featuresData = [
 ];
 
 export default function HomePage() {
+  const router = useRouter();
+  const { user, setUser, logout } = useAuth();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
   const [activeSlide, setActiveSlide] = useState(0);
   
   // File Upload State
@@ -85,6 +90,15 @@ export default function HomePage() {
 
   const handleDropzoneClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleAnalyzeClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevents re-opening file browser on click
+    if (!user) {
+      setIsAuthOpen(true);
+    } else {
+      router.push('/dashboard');
+    }
   };
 
   const scrollToTop = () => {
@@ -126,13 +140,29 @@ export default function HomePage() {
             Home
           </button>
           
-          <button 
-            onClick={() => setIsAuthOpen(true)}
-            className="flex items-center gap-2 px-5 py-2 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition shadow-lg shadow-emerald-500/20"
-          >
-            <User className="w-3.5 h-3.5" />
-            {user ? user.email.split('@')[0] : 'Sign In / Sign Up'}
-          </button>
+          {user ? (
+            <div className="flex items-center gap-2">
+              <span className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold text-xs">
+                <User className="w-3.5 h-3.5" />
+                {user.email ? user.email.split('@')[0] : 'User'}
+              </span>
+              <button
+                onClick={logout}
+                title="Sign Out"
+                className="p-2 rounded-full bg-slate-900 border border-slate-800 text-slate-400 hover:text-red-400 hover:bg-slate-800 transition"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ) : (
+            <button 
+              onClick={() => setIsAuthOpen(true)}
+              className="flex items-center gap-2 px-5 py-2 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition shadow-lg shadow-emerald-500/20"
+            >
+              <User className="w-3.5 h-3.5" />
+              Sign In / Sign Up
+            </button>
+          )}
         </div>
       </header>
 
@@ -182,6 +212,23 @@ export default function HomePage() {
                   <h3 className="text-lg font-bold text-white mb-1">Upload Your Resume</h3>
                   <p className="text-slate-400 text-xs mb-4">Click to browse or drag & drop your resume (PDF or DOCX)</p>
                 </div>
+              )}
+
+              {/* ACTION BUTTON TO TRIGGER ANALYSIS */}
+              {selectedFile && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-4 flex justify-center"
+                >
+                  <button
+                    onClick={handleAnalyzeClick}
+                    className="py-3 px-6 rounded-2xl bg-gradient-to-r from-emerald-400 to-emerald-500 hover:from-emerald-300 hover:to-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/20"
+                  >
+                    <span>Analyze Resume Now</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </motion.div>
               )}
               
               <div className="flex justify-center gap-3">
