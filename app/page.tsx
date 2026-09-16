@@ -17,8 +17,10 @@ import {
   Sparkles,
   CheckCircle2,
   ArrowRight,
-  LogOut
+  LogOut,
+  Loader2
 } from 'lucide-react';
+import { apiFetch } from '@/lib/apiClient';
 import AuthModal from '../components/AuthModal';
 import { useAuth } from '../context/AuthContext';
 
@@ -68,6 +70,10 @@ export default function HomePage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // API Integration State
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
   const nextSlide = () => {
     setActiveSlide((prev) => (prev + 1) % featuresData.length);
   };
@@ -89,15 +95,42 @@ export default function HomePage() {
   };
 
   const handleDropzoneClick = () => {
+    if (isAnalyzing) return; // Prevent opening file browser while analyzing
     fileInputRef.current?.click();
   };
 
-  const handleAnalyzeClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevents re-opening file browser on click
+  const handleAnalyzeClick = async (e: React.MouseEvent) => {
+    e.stopPropagation(); 
+    
     if (!user) {
       setIsAuthOpen(true);
-    } else {
+      return;
+    }
+    
+    if (!selectedFile) return;
+
+    setIsAnalyzing(true);
+    setUploadError(null);
+
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+
+    try {
+      // Send file to your backend
+      const response = await apiFetch('/api/analyze', {
+        method: 'POST',
+        body: formData,
+      });
+
+      // Save the AI response locally so the dashboard can load it instantly
+      sessionStorage.setItem('currentAnalysis', JSON.stringify(response.data));
+
+      // Route to dashboard
       router.push('/dashboard');
+    } catch (error: any) {
+      console.error('Upload Failed:', error);
+      setUploadError(error.message || 'An error occurred while analyzing the resume.');
+      setIsAnalyzing(false);
     }
   };
 
@@ -188,12 +221,26 @@ export default function HomePage() {
             </div>
 
             {/* Clickable Interactive Upload Box */}
+            {/* API Error Display */}
+            {uploadError && (
+              <div className="mb-4 p-4 text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl text-sm font-medium text-center">
+                {uploadError}
+              </div>
+            )}
+
+            {/* Clickable Interactive Upload Box */}
             <div 
               onClick={handleDropzoneClick}
-              className="border-2 border-dashed border-emerald-500/30 hover:border-emerald-500/70 rounded-3xl p-8 bg-slate-900/30 hover:bg-slate-900/50 backdrop-blur-md text-center transition group cursor-pointer active:scale-[0.99]"
+              className={`border-2 border-dashed rounded-3xl p-8 text-center transition group cursor-pointer 
+                ${isAnalyzing 
+                  ? 'border-emerald-500/50 bg-slate-900/50 opacity-80 pointer-events-none' 
+                  : 'border-emerald-500/30 hover:border-emerald-500/70 bg-slate-900/30 hover:bg-slate-900/50 active:scale-[0.99]'
+                } backdrop-blur-md`}
             >
               <div className="w-14 h-14 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition">
-                {selectedFile ? (
+                {isAnalyzing ? (
+                  <Loader2 className="w-7 h-7 text-emerald-400 animate-spin" />
+                ) : selectedFile ? (
                   <CheckCircle2 className="w-7 h-7 text-emerald-400" />
                 ) : (
                   <UploadCloud className="w-7 h-7 text-emerald-400" />
@@ -205,7 +252,9 @@ export default function HomePage() {
                   <h3 className="text-lg font-bold text-emerald-400 mb-1 flex items-center justify-center gap-2">
                     {selectedFile.name}
                   </h3>
-                  <p className="text-slate-400 text-xs mb-4">Click to change or select a different resume</p>
+                  <p className="text-slate-400 text-xs mb-4">
+                    {isAnalyzing ? 'Extracting text and running AI analysis...' : 'Click to change or select a different resume'}
+                  </p>
                 </div>
               ) : (
                 <div>
@@ -223,10 +272,20 @@ export default function HomePage() {
                 >
                   <button
                     onClick={handleAnalyzeClick}
-                    className="py-3 px-6 rounded-2xl bg-gradient-to-r from-emerald-400 to-emerald-500 hover:from-emerald-300 hover:to-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/20"
+                    disabled={isAnalyzing}
+                    className="py-3 px-6 rounded-2xl bg-gradient-to-r from-emerald-400 to-emerald-500 hover:from-emerald-300 hover:to-emerald-400 disabled:from-emerald-600 disabled:to-emerald-700 text-slate-950 font-black text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/20"
                   >
-                    <span>Analyze Resume Now</span>
-                    <ArrowRight className="w-4 h-4" />
+                    {isAnalyzing ? (
+                      <>
+                        <span>Analyzing...</span>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      </>
+                    ) : (
+                      <>
+                        <span>Analyze Resume Now</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </>
+                    )}
                   </button>
                 </motion.div>
               )}
