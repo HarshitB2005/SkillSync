@@ -49,19 +49,46 @@ export async function POST(req: NextRequest) {
     const parseResult = await parseDocument(buffer, file.name, file.type);
 
     // 5. AI Resume Parsing Engine (Phase 3)
-    const analysisPayload = await analyzeResumeWithAI(parseResult.text);
+    // --- UPDATED: Added an automatic retry loop for Gemini 503 Overload Errors ---
+    let analysisPayload;
+    let maxRetries = 3;
+    let attempt = 0;
+
+    while (attempt < maxRetries) {
+      try {
+        analysisPayload = await analyzeResumeWithAI(parseResult.text);
+        break; // If successful, break out of the loop
+      } catch (aiError: any) {
+        attempt++;
+        const errorMessage = aiError.message || '';
+        
+        // Check if it's a 503 Service Unavailable / High Demand error
+        if (errorMessage.includes('503') || errorMessage.includes('high demand') || errorMessage.includes('UNAVAILABLE')) {
+          console.warn(`[Gemini API] High demand error (503). Retrying attempt ${attempt} of ${maxRetries}...`);
+          
+          if (attempt >= maxRetries) {
+            throw new Error('Gemini AI is currently overloaded after multiple attempts. Please try again in a few minutes.');
+          }
+          // Wait for 2.5 seconds before retrying to allow Google's servers to cool down
+          await new Promise((resolve) => setTimeout(resolve, 2500));
+        } else {
+          // If it's a different error (like a bad API key), throw immediately without retrying
+          throw aiError;
+        }
+      }
+    }
 
     // 6. Save Raw File to Firebase Cloud Storage
     //const timestamp = Date.now();
     //const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
     //const storagePath = `resumes/${userId}/${timestamp}_${sanitizedFileName}`;
-   // const bucket = adminStorage.bucket();
+    // const bucket = adminStorage.bucket();
     //const fileRef = bucket.file(storagePath);
 
     //await fileRef.save(buffer, {
       //metadata: {
       //  contentType: file.type || 'application/octet-stream',
-     // },
+      // },
     //});
 
     // 7. Save Analysis JSON to Firestore Database
