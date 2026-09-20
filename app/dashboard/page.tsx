@@ -228,7 +228,6 @@ export default function Dashboard() {
               key={currentScore} 
               initial={{ rotate: -90, opacity: 0 }}
               animate={{ rotate: 0, opacity: 1 }}
-              {/* FIX: Added `as const` to this inline transition as well */}
               transition={{ duration: 0.8, delay: 0.3, type: "spring" as const }}
               className="relative w-40 h-40 flex items-center justify-center rounded-full bg-slate-950/80 border-4 border-slate-800 mx-auto md:mx-0 shadow-inner"
             >
