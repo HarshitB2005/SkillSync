@@ -63,7 +63,7 @@ const staggerContainer: any = {
 // FIX: Added `as const` to force strict literal typing for framer-motion
 const cardSlideIn: any = {
   hidden: { y: 20, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { type: 'spring' as const, stiffness: 100 } },
+  visible: { y: 0, opacity: 1 },
 };
 
 const getScoreColor = (score: number) => {
