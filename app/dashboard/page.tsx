@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { 
   Target, 
   AlertTriangle, 
@@ -52,7 +52,7 @@ const defaultTimeline = [
   { id: 5, stage: "Job Ready", description: "Target matches over 90% score capability.", status: "upcoming" }
 ];
 
-const staggerContainer = {
+const staggerContainer: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -60,7 +60,7 @@ const staggerContainer = {
   },
 };
 
-const cardSlideIn = {
+const cardSlideIn: Variants = {
   hidden: { y: 20, opacity: 0 },
   visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 100 } },
 };
@@ -97,7 +97,7 @@ export default function Dashboard() {
       } catch (error) {
         console.error("Failed to fetch live data:", error);
       } finally {
-        setLoading(false);
+        loading(false);
       }
     }
     loadDashboardData();
