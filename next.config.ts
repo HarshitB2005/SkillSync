@@ -1,14 +1,12 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ['pdf2json', 'mammoth'],
+  // Add firebase-admin here so Vercel doesn't break it during the build
+  serverExternalPackages: ['pdf2json', 'mammoth', 'firebase-admin'],
   typescript: {
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
     ignoreBuildErrors: true,
   },
   eslint: {
-    // Ignore eslint errors during build
     ignoreDuringBuilds: true,
   },
 };
