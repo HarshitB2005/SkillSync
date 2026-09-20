@@ -60,9 +60,10 @@ const staggerContainer: Variants = {
   },
 };
 
+// FIX: Added `as const` to force strict literal typing for framer-motion
 const cardSlideIn: Variants = {
   hidden: { y: 20, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 100 } },
+  visible: { y: 0, opacity: 1, transition: { type: 'spring' as const, stiffness: 100 } },
 };
 
 const getScoreColor = (score: number) => {
@@ -97,7 +98,7 @@ export default function Dashboard() {
       } catch (error) {
         console.error("Failed to fetch live data:", error);
       } finally {
-        loading(false);
+        setLoading(false);
       }
     }
     loadDashboardData();
@@ -115,7 +116,6 @@ export default function Dashboard() {
     );
   };
 
-  // --- Native Print Export (Bypasses html2canvas & oklab errors completely) ---
   const exportToPDF = () => {
     window.print();
   };
@@ -148,7 +148,6 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-[#050814] text-white selection:bg-emerald-500 selection:text-slate-950 font-sans pb-20">
       
-      {/* Added print:hidden so the navigation bar is automatically hidden when printing/saving PDF */}
       <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#050814]/80 border-b border-slate-800/60 px-6 py-4 flex items-center justify-between max-w-7xl mx-auto mb-8 print:hidden">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center font-bold text-emerald-400 text-lg shadow-lg shadow-emerald-500/10">
@@ -229,7 +228,8 @@ export default function Dashboard() {
               key={currentScore} 
               initial={{ rotate: -90, opacity: 0 }}
               animate={{ rotate: 0, opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.3, type: "spring" }}
+              {/* FIX: Added `as const` to this inline transition as well */}
+              transition={{ duration: 0.8, delay: 0.3, type: "spring" as const }}
               className="relative w-40 h-40 flex items-center justify-center rounded-full bg-slate-950/80 border-4 border-slate-800 mx-auto md:mx-0 shadow-inner"
             >
               <div className="text-center">
