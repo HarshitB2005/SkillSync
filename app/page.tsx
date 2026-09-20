@@ -21,7 +21,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { apiFetch } from '@/lib/apiClient';
-import AuthModal from '../components/AuthModal';
+import AuthModal from '../Components/AuthModal';
 import { useAuth } from '../context/AuthContext';
 
 // Features Carousel Data
