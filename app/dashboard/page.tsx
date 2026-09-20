@@ -52,7 +52,7 @@ const defaultTimeline = [
   { id: 5, stage: "Job Ready", description: "Target matches over 90% score capability.", status: "upcoming" }
 ];
 
-const staggerContainer: Variants = {
+const staggerContainer: any = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -61,7 +61,7 @@ const staggerContainer: Variants = {
 };
 
 // FIX: Added `as const` to force strict literal typing for framer-motion
-const cardSlideIn: Variants = {
+const cardSlideIn: any = {
   hidden: { y: 20, opacity: 0 },
   visible: { y: 0, opacity: 1, transition: { type: 'spring' as const, stiffness: 100 } },
 };
@@ -228,7 +228,7 @@ export default function Dashboard() {
               key={currentScore} 
               initial={{ rotate: -90, opacity: 0 }}
               animate={{ rotate: 0, opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.3, type: "spring" as const }}
+              transition={{ duration: 0.8, delay: 0.3 }}
               className="relative w-40 h-40 flex items-center justify-center rounded-full bg-slate-950/80 border-4 border-slate-800 mx-auto md:mx-0 shadow-inner"
             >
               <div className="text-center">
