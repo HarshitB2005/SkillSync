@@ -1,8 +1,8 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  // Add firebase-admin here so Vercel doesn't break it during the build
-  serverExternalPackages: ['pdf2json', 'mammoth', 'firebase-admin'],
+  // Remove firebase-admin from this list so it bundles normally
+  serverExternalPackages: ['pdf2json', 'mammoth'],
   typescript: {
     ignoreBuildErrors: true,
   },
