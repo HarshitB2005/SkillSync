@@ -128,9 +128,11 @@ export default function HomePage() {
       // Route to dashboard
       router.push('/dashboard');
     } catch (error: any) {
-      console.error('Upload Failed:', error);
-      setUploadError(error.message || 'An error occurred while analyzing the resume.');
+      console.error("Upload failed:", error);
+      // Strictly set the real backend error and halt execution
+      setUploadError(error.message || "Failed to analyze resume. Please try again.");
       setIsAnalyzing(false);
+      return; 
     }
   };
 
@@ -220,7 +222,6 @@ export default function HomePage() {
               </p>
             </div>
 
-            {/* Clickable Interactive Upload Box */}
             {/* API Error Display */}
             {uploadError && (
               <div className="mb-4 p-4 text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl text-sm font-medium text-center">
